@@ -7,6 +7,7 @@ import DriverApplication from './pages/DriverApplication';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminTrips from './pages/admin/AdminTrips';
+import AdminMessages from './pages/admin/AdminMessages';
 import AdminDrivers from './pages/admin/AdminDrivers';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminVehicles from './pages/admin/AdminVehicles';
@@ -51,6 +52,7 @@ export default function App() {
           }
         >
           <Route path="trips" element={<AdminTrips />} />
+          <Route path="messages" element={<AdminMessages />} />
           <Route path="drivers" element={<AdminDrivers />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="vehicles" element={<AdminVehicles />} />

@@ -76,7 +76,48 @@ export default function BookingForm({ embedded = false }) {
       status: 'pending',
       payment_status: 'unpaid',
     });
-    if (!error) localStorage.setItem('dromos_last_phone', form.phone);
+        if (!error) {
+      localStorage.setItem('dromos_last_phone', form.phone);
+      const when = new Date(form.requested_time).toLocaleString();
+      const costLine = fee != null ? kes(fee) : 'to be confirmed';
+
+      // Confirmation to the patient (only if they gave an email) — non-blocking.
+      if (form.email) {
+        supabase.functions.invoke('send-booking-email', {
+          body: {
+            to: form.email,
+            subject: 'Dromos MedRide — booking received',
+            html: `
+              <p>Hi ${form.patient_name},</p>
+              <p>We've received your ride booking to <b>${form.destination}</b> on <b>${when}</b>.</p>
+              <p>Trip cost: <b>${costLine}</b> — pay via M-Pesa till <b>${SITE.mpesaTill}</b>.</p>
+              <p>We'll confirm your driver's name, plate number and phone shortly. Questions? Call or WhatsApp us at ${SITE.phone}.</p>
+              <p>— Dromos MedRide</p>
+            `,
+          },
+        }).catch(() => {});
+      }
+
+      // Alert to the business inbox, every time — this is what shows you who's booked.
+      supabase.functions.invoke('send-booking-email', {
+        body: {
+          to: SITE.email,
+          subject: `New booking — ${form.patient_name}`,
+          html: `
+            <p><b>New booking received</b></p>
+            <p>Patient: <b>${form.patient_name}</b><br/>
+            Phone: <b>${form.phone}</b><br/>
+            ${form.email ? `Email: ${form.email}<br/>` : ''}
+            Pickup: ${form.pickup_label || '—'}<br/>
+            Destination: <b>${form.destination}</b><br/>
+            Date/time: <b>${when}</b><br/>
+            Vehicle: ${form.ride_type} · ${form.trip_nature === 'package' ? 'Package' : 'One-off'}${form.wait_and_return ? ' · Wait-and-return' : ''}<br/>
+            Fee: <b>${costLine}</b></p>
+            <p>View and assign this trip in the admin dashboard.</p>
+          `,
+        },
+      }).catch(() => {});
+    }
     setStatus(error ? 'error' : 'success');
   }
 

@@ -1,17 +1,17 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Car, Users2, UserCircle, Truck, CreditCard, BarChart3, LogOut } from 'lucide-react';
+import { Car, Users2, UserCircle, Truck, CreditCard, BarChart3, LogOut, Mail } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import Logo from '../../components/Logo';
 
 const LINKS = [
   { to: '/admin/trips', label: 'Trips', icon: Car },
+  { to: '/admin/messages', label: 'Messages', icon: Mail },
   { to: '/admin/drivers', label: 'Drivers', icon: Users2 },
   { to: '/admin/users', label: 'Users', icon: UserCircle },
   { to: '/admin/vehicles', label: 'Vehicles', icon: Truck },
   { to: '/admin/payments', label: 'Payments', icon: CreditCard },
   { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
 ];
-
 export default function AdminLayout() {
   const navigate = useNavigate();
 
